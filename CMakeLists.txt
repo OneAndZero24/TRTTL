@@ -1,32 +1,18 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.14)
+project(trttl VERSION 0.0.1)
 
-project(a.out)
+set(CMAKE_CXX_STANDARD 20)      # C++20
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# TensorRT
+include_directories(/usr/include/x86_64-linux-gnu/)
+link_directories(/usr/lib/x86_64-linux-gnu/)
 
-# Remove for compiler-specific features
-set(CMAKE_CXX_EXTENSIONS OFF)
+# CUDA
+include_directories(/usr/local/cuda/include)
+link_directories(/usr/local/cuda/lib64)
 
-string(APPEND CMAKE_CXX_FLAGS " -Wall")
-string(APPEND CMAKE_CXX_FLAGS " -Wbuiltin-macro-redefined")
-string(APPEND CMAKE_CXX_FLAGS " -pedantic")
-string(APPEND CMAKE_CXX_FLAGS " -Werror")
+add_executable(main main.cpp)
+target_link_libraries(main nvinfer)     # TensorRT
+target_link_libraries(main cudart)      # CUDA Runtime
 
-# clangd completion
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-include_directories(${CMAKE_SOURCE_DIR})
-file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
-
-add_executable(${PROJECT_NAME} ${SOURCES})
-
-set(Boost_USE_STATIC_LIBS        ON) # only find static libs
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF) # do not look for boost libraries linked against static C++ std lib
-
-find_package(Boost REQUIRED COMPONENTS filesystem)
-
-target_link_libraries(${PROJECT_NAME}
-    Boost::filesystem
-)
+add_definitions(-O2 -pthread)

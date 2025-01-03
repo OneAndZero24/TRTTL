@@ -1,3 +1,0 @@
-[submodule "build_tools"]
-	path = build_tools
-	url = https://github.com/f-squirrel/dockerized_cpp.git

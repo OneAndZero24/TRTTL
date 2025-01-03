@@ -1,0 +1,46 @@
+name: CI/CD
+run-name: ⚙️ ${{ github.actor }} - ${{ github.event_name }} - ${{ github.sha }} - {{ github.run_id }} - ${{ github.run_number }}
+on:
+  push:
+    branches: ['main']
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: oneandzero24/trttl
+jobs:
+  Build-Compile-Push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Get project version
+        uses: DarwinInnovation/cmake-project-version-action@v1.0
+        id: version
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6
+        id: push
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.push.version/version }}
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+      
