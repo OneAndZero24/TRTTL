@@ -5,7 +5,7 @@ on:
     branches: ['main']
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: OneAndZero24/trttl
+  IMAGE_NAME: oneandzero24/trttl
 jobs:
   Build-Compile-Push:
     runs-on: ubuntu-latest
