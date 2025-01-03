@@ -1,4 +1,4 @@
-<center><img src="logo.png" alt="LOGO" width="200"/></center>
+<p align="center"><img src="logo.png" alt="LOGO" width="200"/></p>
 
 # ***TRTTL*** - TensorRT Template Library
 ### 🚀 ***Accelerate your TensorRT C++ Development!*** 🚀
