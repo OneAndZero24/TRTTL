@@ -5,7 +5,7 @@ on:
     branches: ['main']
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: oneandzero24/trttl
+  IMAGE_NAME: OneAndZero24/trttl
 jobs:
   Build-Compile-Push:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.push.version.version }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.version.outputs.version }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
