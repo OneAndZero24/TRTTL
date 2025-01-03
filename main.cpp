@@ -1,12 +1,13 @@
-#include "NvInfer.h"
+#include <NvInfer.h>
+#include <NvInferRuntime.h>
 #include <iostream>
 #include <memory>
 
 
 // From TRT C++ API docs
 class Logger : public nvinfer1::ILogger {
-    void log(nvinfer1::Severity severity, const char* msg) noexcept override {
-        if (severity <= nvinfer1::Severity::kWARNING)
+    void log(nvinfer1::ILogger::Severity severity, const char* msg) noexcept override {
+        if (severity <= nvinfer1::ILogger::Severity::kWARNING)
             std::cout << msg << std::endl;
     }
 } logger;
