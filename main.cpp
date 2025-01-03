@@ -4,9 +4,9 @@
 
 
 // From TRT C++ API docs
-class Logger : public ILogger {
-    void log(Severity severity, const char* msg) noexcept override {
-        if (severity <= Severity::kWARNING)
+class Logger : public nvinfer1::ILogger {
+    void log(nvinfer1::Severity severity, const char* msg) noexcept override {
+        if (severity <= nvinfer1::Severity::kWARNING)
             std::cout << msg << std::endl;
     }
 } logger;
