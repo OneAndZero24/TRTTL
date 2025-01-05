@@ -10,6 +10,8 @@ Lightweight C++ template library that builds on top of TensorRT C++ API extendin
 
 ## Features
 - Flexible logger
+- Compile time Module definition API
+- Compile time data shape/type checks
 
 ## Environment
 - TensorRT container 23.05

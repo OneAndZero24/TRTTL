@@ -1,7 +1,9 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include <NvInferRuntimeCommon.h>
+#include "util/cexpr_utils.hpp"
+#include "util/trt_types.hpp"
+#include <NvInfer.h>
 #include <source_location>
 #include <type_traits>
 #include <iostream>
@@ -13,12 +15,6 @@
 #include <mutex>
 
 namespace trttl {
-using Severity = nvinfer1::ILogger::Severity;
-
-template <typename E>
-constexpr auto to_underlying(E e) noexcept {
-    return static_cast<std::underlying_type_t<E>>(e);
-}
 
 /*!
 * Log stream wrapper class - returns stream to write to.
@@ -87,6 +83,9 @@ public:
     }
 };
 
+/*!
+* Concept for classes derived from LogStream.
+*/
 template <typename T>
 concept DerivedFromLogStream = std::derived_from<T, LogStream<T>>;
 
@@ -122,11 +121,11 @@ public:
     * Log function.
     * Attaches prefix, timestamp and source_location.
     */
-    template<Severity severity>
+    template<trt_types::Severity severity>
     void print(const char* msg, const std::source_location location = 
              std::source_location::current()
     ) {
-        const auto i = to_underlying<Severity>(severity);
+        const auto i = cexpr_utils::to_underlying<trt_types::Severity>(severity);
         std::lock_guard<std::mutex> lock(mtx);
         auto&& stream = std::get<i>(log_streams).get();
 
@@ -145,22 +144,22 @@ public:
     /*! 
     * Just for TRT C++ API comaptibility.
     */ 
-    void log(Severity severity, const char* msg) noexcept override {
+    void log(trt_types::Severity severity, const char* msg) noexcept override {
         switch (severity) {
-            case Severity::kINTERNAL_ERROR:
-                print<Severity::kINTERNAL_ERROR>(msg);
+            case trt_types::Severity::kINTERNAL_ERROR:
+                print<trt_types::Severity::kINTERNAL_ERROR>(msg);
                 break;
-            case Severity::kERROR:
-                print<Severity::kERROR>(msg);
+            case trt_types::Severity::kERROR:
+                print<trt_types::Severity::kERROR>(msg);
                 break;
-            case Severity::kWARNING:
-                print<Severity::kWARNING>(msg);
+            case trt_types::Severity::kWARNING:
+                print<trt_types::Severity::kWARNING>(msg);
                 break;
-            case Severity::kINFO:
-                print<Severity::kINFO>(msg);
+            case trt_types::Severity::kINFO:
+                print<trt_types::Severity::kINFO>(msg);
                 break;
-            case Severity::kVERBOSE:
-                print<Severity::kVERBOSE>(msg);
+            case trt_types::Severity::kVERBOSE:
+                print<trt_types::Severity::kVERBOSE>(msg);
                 break;
             default:
                 break;
