@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
-project(trttl VERSION 0.0.1)
+project(trttl VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20) # C++20
+set(CXX_STANDARD_REQUIRED ON)
 
 # TensorRT
 set(TENSORRT_INCLUDE_DIR /usr/include/x86_64-linux-gnu/)
@@ -19,7 +20,7 @@ add_definitions(-O2 -pthread)
 enable_testing()
 
 # Collect all test source files
-file(GLOB TEST_SOURCES tests/test*.cpp)
+file(GLOB TEST_SOURCES test/test*.cpp)
 
 foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE) # Get name without extension

@@ -4,9 +4,12 @@
 ![Build Status](https://img.shields.io/github/actions/workflow/status/OneAndZero24/TRTTL/ci-cd.yml) ![TRT ver](https://img.shields.io/badge/TensorRT_ver.-8.6.1-blue)
 ### 🚀 ***Accelerate your TensorRT C++ Development!*** 🚀
 
-Lightweight C++ template library that builds on top of TensorRT C++ API extending it with quality-of-life and safety improvements. Includes basic architectures predefined. Compile-time model architecture definition allows for catching dimension mismatches at compile time!
+Lightweight C++ template library that builds on top of TensorRT C++ API extending it with quality-of-life and safety improvements. Compile-time model architecture definition allows for catching dimension mismatches before execution!
 
 ***This library is in early development stages. Features may be missing and issues may occur!***
+
+## Features
+- Flexible logger
 
 ## Environment
 - TensorRT container 23.05
