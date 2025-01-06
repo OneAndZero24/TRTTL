@@ -109,15 +109,12 @@ void testTensorRTNetworkAndEngine() {
     trt_types::Tensor* output_tensor = seq.addToNetwork(network, input);
     network->markOutput(*output_tensor);
 
-    builder->setMaxBatchSize(1);
-    config->setMaxWorkspaceSize(1 << 20);
-
-    nvinfer1::ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    engine->serialize();
+    nvinfer1::IHostMemory* buffer{nullptr};
+    buffer = builder->buildSerializedNetwork(*network, *config);
 
     std::cout << "TensorRT Engine Test Passed!" << std::endl;
 
-    delete engine;
+    delete buffer;
     delete network;
     delete config;
     delete builder;
