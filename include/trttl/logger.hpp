@@ -18,7 +18,6 @@ namespace trttl {
 
 /*!
 * Log stream wrapper class - returns stream to write to.
-* Uses compile-time polymorphism via wonders of CRTP.
 * LogStream object must encapsulate & manage underlying resources.
 *
 * @tparam Derived - CRTP
@@ -111,7 +110,7 @@ template <DerivedFromLogStream LogStreamINTERNAL_ERROR = NoLog,
 class Logger : public nvinfer1::ILogger {
 private:
     static std::mutex mtx;                                    /*!< Mutex for thread safety.*/
-    static constexpr const char* lookup[5] lookup = {         /*!< Static lookup-table for log level prefixes.*/
+    static constexpr const char* lookup[5] = {                /*!< Static lookup-table for log level prefixes.*/
         "[IE]", "[E]", "[W]", "[I]", "[V]"
     };
 

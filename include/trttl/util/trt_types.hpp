@@ -2,13 +2,23 @@
 #define TRT_TYPES_HPP
 
 #include <NvInfer.h>
+#include <algorithm>
 
 namespace trttl {
     namespace trt_types {
         using Severity = nvinfer1::ILogger::Severity;
         using Dims = nvinfer1::Dims;
         using DataType = nvinfer1::DataType;
-        using Tensor = nvinfer1::Itensor;
+        using Tensor = nvinfer1::ITensor;
+        using Network = nvinfer1::INetworkDefinition;
+        using Weights = nvinfer1::Weights;
+        using MatrixOperation = nvinfer1::MatrixOperation;
+        using ElementWiseOperation = nvinfer1::ElementWiseOperation;
     } // trt_types namespace
+
+    constexpr bool operator==(const trt_types::Dims& lhs, const trt_types::Dims& rhs) {
+        return (lhs.nbDims == rhs.nbDims) && std::ranges::equal(lhs.d, rhs.d);
+    }
+
 } // trttl namespace
 #endif //TRT_TYPES_HPP

@@ -8,8 +8,10 @@ namespace trttl {
         /*!
         * Returns last param.
         */
-        template<typename... Ts>
-        struct last_rec;
+        template <typename... Ts>
+        struct last_rec {
+            static_assert(sizeof...(Ts) > 0, "Empty parameter pack! Cannot deduce the last type.");
+        };
 
         template<typename T>
         struct last_rec<T> {
@@ -18,7 +20,7 @@ namespace trttl {
 
         template<typename T1, typename T2, typename... Ts>
         struct last_rec<T1, T2, Ts...> {
-            using type = typename last_rec<Ts...>::type;
+            using type = typename last_rec<T2, Ts...>::type;
         };
 
         template<typename... Ts>
