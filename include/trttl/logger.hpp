@@ -26,6 +26,11 @@ namespace trttl {
 template<typename Derived>
 class LogStream{
 public:
+    LogStream() {
+        static_assert(std::is_member_function_pointer_v<decltype(&Derived::get_impl)>, 
+                      "Derived must implement get_impl().");
+    }
+
     /*!
     * Returns stream to log to. 
     */
@@ -106,7 +111,7 @@ template <DerivedFromLogStream LogStreamINTERNAL_ERROR = NoLog,
 class Logger : public nvinfer1::ILogger {
 private:
     static std::mutex mtx;                                    /*!< Mutex for thread safety.*/
-    static constexpr std::array<const char*, 5> lookup = {    /*!< Static lookup-table for log level prefixes.*/
+    static constexpr const char* lookup[5] lookup = {         /*!< Static lookup-table for log level prefixes.*/
         "[IE]", "[E]", "[W]", "[I]", "[V]"
     };
 
@@ -117,6 +122,8 @@ private:
                LogStreamVERBOSE> log_streams;                 /*!< `LogStream` objects container.*/
 
 public:
+    Logger() : log_streams{} {}
+
     /*!
     * Log function.
     * Attaches prefix, timestamp and source_location.
