@@ -12,6 +12,10 @@ void testLinearLayerInitialization() {
     std::vector<float> weights(50, 0.1f);
     std::vector<float> biases(5, 0.0f);
     LinearLayer<trt_types::Dims{1, 10}, trt_types::Dims{1, 5}, trt_types::DataType::kFLOAT> layer(weights, biases);
+    auto paramDims = layer.calcParamDims();
+    std::cout << std::get<0>(paramDims).d[0] << " " << std::get<0>(paramDims).d[1] << " " << std::get<1>(paramDims).d[0] << std::endl;
+    assert(50 == std::get<0>(paramDims).d[0] * std::get<0>(paramDims).d[1]);
+    assert(5 == std::get<1>(paramDims).d[0]);
 
     std::cout << "LinearLayer Initialization Test Passed!" << std::endl;
 }

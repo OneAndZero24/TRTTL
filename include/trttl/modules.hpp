@@ -8,8 +8,6 @@
 #include <vector>
 #include <tuple>
 
-#include <cassert>
-
 namespace trttl {
 
 /*!
@@ -118,9 +116,6 @@ public:
         auto biases = trt_types::Weights{dt, b_data.data(), static_cast<int64_t>(b_data.size())};
         auto b_tensor = network->addConstant(std::get<1>(paramDims), biases)->getOutput(0);
         auto add = network->addElementWise(*matmul->getOutput(0), *b_tensor, trt_types::ElementWiseOperation::kSUM);
-
-        assert(w_data.size() == std::get<0>(paramDims).d[0] * std::get<0>(paramDims).d[1]);
-        assert(b_data.size() == std::get<1>(paramDims).d[0]);
 
         return add->getOutput(0);
     }
