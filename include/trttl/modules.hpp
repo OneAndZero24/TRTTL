@@ -103,7 +103,7 @@ public:
     }
     
     static auto calcParamDims() {
-        return std::make_tuple(trt_types::Dims{2, out.d[0], in.d[0]}, trt_types::Dims{2, 1, out.d[0]}); //TensorRT wants Dims rank >= 2
+        return std::make_tuple(trt_types::Dims{3, 1, out.d[0], in.d[0]}, trt_types::Dims{3, 1, 1, out.d[0]}); //TensorRT wants Dims rank >= 2
     }
 
     trt_types::Tensor* addToNetwork_impl(trt_types::Network* network, trt_types::Tensor* data) {
