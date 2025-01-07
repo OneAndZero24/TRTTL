@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(trttl VERSION 0.2.9)
+project(trttl VERSION 0.2.10)
 
 set(CMAKE_CXX_STANDARD 20) # C++20
 set(CXX_STANDARD_REQUIRED ON)
