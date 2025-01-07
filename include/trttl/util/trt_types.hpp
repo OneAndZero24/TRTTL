@@ -23,5 +23,12 @@ namespace trttl {
         return (lhs.nbDims == rhs.nbDims) && std::ranges::equal(lhs.d, rhs.d);
     }
 
+    int32_t dimVolume(const trt_types::Dims& dim) {
+        int32_t r = 1;
+        for(auto i : dim.d)
+            r *= i;
+        return r/dim.d[0]; //First is batch
+    }
+
 } // trttl namespace
 #endif //TRT_TYPES_HPP

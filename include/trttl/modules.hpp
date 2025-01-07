@@ -100,6 +100,11 @@ private:
     std::vector<float> b_data;
 
 public:
+    LinearLayer() {
+        w_data = std::vector<float>(dimVolume(in), 0.1f);
+        b_data = std::vector<float>(dimVolume(out), 0.1f);
+    }
+
     LinearLayer(std::vector<float> &weights, std::vector<float> &biases) {
         w_data = weights;
         b_data = biases;
@@ -135,6 +140,18 @@ public:
     trt_types::Tensor* addToNetwork_impl(trt_types::Network* network, trt_types::Tensor* data) {
         auto activation = network->addActivation(*data, activation_type);
         return activation->getOutput(0);
+    }
+};
+
+/*!
+* Softmax Layer.
+*/
+template<int32_t bs, trt_types::Dims size, trt_types::DataType dt>
+class SoftmaxLayer : public Module<SoftmaxLayer<bs, size, dt>, bs, size, size, dt> {
+public:
+    trt_types::Tensor* addToNetwork_impl(trt_types::Network* network, trt_types::Tensor* data) {
+        auto sm = network->addSoftMax(*data);
+        return sm->getOutput(0);
     }
 };
 

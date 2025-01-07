@@ -106,7 +106,8 @@ template <DerivedFromLogStream LogStreamINTERNAL_ERROR = NoLog,
           DerivedFromLogStream LogStreamERROR = NoLog, 
           DerivedFromLogStream LogStreamWARNING = NoLog, 
           DerivedFromLogStream LogStreamINFO = NoLog, 
-          DerivedFromLogStream LogStreamVERBOSE = NoLog>
+          DerivedFromLogStream LogStreamVERBOSE = NoLog,
+          trt_types::Severity throwSeverity = trt_types::Severity::kERROR>
 class Logger : public nvinfer1::ILogger {
 private:
     static std::mutex mtx;                                    /*!< Mutex for thread safety.*/
@@ -120,15 +121,12 @@ private:
                LogStreamINFO, 
                LogStreamVERBOSE> log_streams;                 /*!< `LogStream` objects container.*/
 
-public:
-    Logger() : log_streams{} {}
-
     /*!
     * Log function.
     * Attaches prefix, timestamp and source_location.
     */
     template<trt_types::Severity severity>
-    void print(const char* msg, const std::source_location location = 
+    void print_impl(const char* msg, const std::source_location location = 
              std::source_location::current()
     ) {
         const auto i = cexpr_utils::to_underlying<trt_types::Severity>(severity);
@@ -145,9 +143,32 @@ public:
                << location.column() << ") `"
                << location.function_name() << "`: "
                << msg << std::endl;
-        
-        if (severity == trt_types::Severity::kERROR)
-            throw std::runtime_error("Runtime error occured.");
+    }
+
+    template<trt_types::Severity severity, bool B>
+    void print_throw(const char* msg, const std::source_location location = 
+             std::source_location::current())
+    requires (B) {
+        print_impl<severity>(msg, location);
+        throw std::runtime_error("Runtime error occurred.");
+    }   
+
+    template<trt_types::Severity severity, bool B>
+    void print_throw(const char* msg, const std::source_location location = 
+             std::source_location::current())
+    requires (!B) {
+        print_impl<severity>(msg, location);
+    }  
+
+public:
+    /*!
+    * Log function interface handles throwing.
+    */
+    template<trt_types::Severity severity>
+    void print(const char* msg, const std::source_location location =
+               std::source_location::current()
+    ) {
+        print_throw<severity, severity==throwSeverity>(msg, location);
     }
 
     /*! 
@@ -176,13 +197,13 @@ public:
     }
 };
 
-template <
-    DerivedFromLogStream LogStreamINTERNAL_ERROR,
+template <DerivedFromLogStream LogStreamINTERNAL_ERROR,
     DerivedFromLogStream LogStreamERROR,
     DerivedFromLogStream LogStreamWARNING,
     DerivedFromLogStream LogStreamINFO,
-    DerivedFromLogStream LogStreamVERBOSE>
-std::mutex Logger<LogStreamINTERNAL_ERROR, LogStreamERROR, LogStreamWARNING, LogStreamINFO, LogStreamVERBOSE>::mtx;
+    DerivedFromLogStream LogStreamVERBOSE,
+    trt_types::Severity throwSeverity>
+std::mutex Logger<LogStreamINTERNAL_ERROR, LogStreamERROR, LogStreamWARNING, LogStreamINFO, LogStreamVERBOSE, throwSeverity>::mtx;
 
 /*!
 * Convinience naming for logger with default LogStreams setup.
