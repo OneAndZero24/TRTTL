@@ -6,7 +6,7 @@
 
 Lightweight C++ template library that builds on top of TensorRT C++ API extending it with quality-of-life and safety improvements. Compile-time model architecture definition allows for catching dimension mismatches before execution!
 
-***This library is in early development stages. Features may be missing and issues may occur!***
+***This library is in early development stages (currently it's just PoC). Features may be missing and issues may occur!***
 
 ## Features
 - Compile time Module definition API
