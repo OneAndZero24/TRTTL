@@ -30,7 +30,7 @@ void testLinearLayerAddToNetwork() {
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
     trt_types::Network* network = builder->createNetworkV2(0U);
-    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{2, {1, 10}});
+    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{3, {1, 1, 10}});
 
     trt_types::Tensor* output_tensor = layer.addToNetwork(network, input);
     network->markOutput(*output_tensor);
@@ -77,7 +77,7 @@ void testSequentialAddToNetwork() {
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
     trt_types::Network* network = builder->createNetworkV2(0U);
-    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{2, {1, 10}});
+    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{3, {1, 1, 10}});
 
     trt_types::Tensor* output_tensor = seq.addToNetwork(network, input);
     network->markOutput(*output_tensor);
@@ -108,7 +108,7 @@ void testTensorRTNetworkAndEngine() {
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
     nvinfer1::IBuilderConfig *config = builder->createBuilderConfig();
     trt_types::Network* network = builder->createNetworkV2(0);
-    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{2, {1, 10}});
+    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{3, {1, 1, 10}});
 
     trt_types::Tensor* output_tensor = seq.addToNetwork(network, input);
     network->markOutput(*output_tensor);
