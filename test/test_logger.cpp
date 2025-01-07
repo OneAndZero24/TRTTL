@@ -10,7 +10,6 @@ void test_logger_custom_streams() {
     Logger<CerrLog, CoutLog, FileLog> logger;
 
     logger.print<trt_types::Severity::kINTERNAL_ERROR>("This is an internal error log.");
-    logger.print<trt_types::Severity::kERROR>("This is an error log.");
     logger.print<trt_types::Severity::kWARNING>("This is a warning log.");
     logger.print<trt_types::Severity::kINFO>("This is an info log.");
     logger.print<trt_types::Severity::kVERBOSE>("This is a verbose log.");
@@ -23,7 +22,6 @@ void test_logger_default() {
     DefaultLogger logger;
 
     logger.print<trt_types::Severity::kINTERNAL_ERROR>("Default logger internal error.");
-    logger.print<trt_types::Severity::kERROR>("Default logger error.");
     logger.print<trt_types::Severity::kWARNING>("Default logger warning.");
     logger.print<trt_types::Severity::kINFO>("Default logger info.");
     logger.print<trt_types::Severity::kVERBOSE>("Default logger verbose.");
@@ -41,7 +39,7 @@ void test_logger_thread_safety() {
         }
     };
 
-    std::thread t1(log_in_thread, "Thread 1 log.", trt_types::Severity::kERROR);
+    std::thread t1(log_in_thread, "Thread 1 log.", trt_types::Severity::kVERBOSE);
     std::thread t2(log_in_thread, "Thread 2 log.", trt_types::Severity::kWARNING);
 
     t1.join();
@@ -56,7 +54,6 @@ void test_logger_no_log() {
 
     // Nothing should be outputted as all severities use NoLog
     logger.print<trt_types::Severity::kINTERNAL_ERROR>("This should not be logged.");
-    logger.print<trt_types::Severity::kERROR>("This should not be logged.");
     logger.print<trt_types::Severity::kWARNING>("This should not be logged.");
     logger.print<trt_types::Severity::kINFO>("This should not be logged.");
     logger.print<trt_types::Severity::kVERBOSE>("This should not be logged.");

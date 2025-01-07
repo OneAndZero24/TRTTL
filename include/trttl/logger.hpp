@@ -145,6 +145,9 @@ public:
                << location.column() << ") `"
                << location.function_name() << "`: "
                << msg << std::endl;
+        
+        if (severity == trt_types::Severity::kERROR)
+            throw std::runtime_error("Runtime error occured.");
     }
 
     /*! 
