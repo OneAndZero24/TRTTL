@@ -46,8 +46,8 @@ void testLinearLayerAddToNetwork() {
 void testSequentialInitialization() {
     std::vector<float> weights1(50, 0.1f);
     std::vector<float> biases1(5, 0.0f);
-    std::vector<float> weights2(50, 0.1f);
-    std::vector<float> biases2(5, 0.0f);
+    std::vector<float> weights2(10, 0.1f);
+    std::vector<float> biases2(2, 0.0f);
     LinearLayer<trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
     LinearLayer<trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
 
@@ -65,8 +65,8 @@ void testSequentialAddToNetwork() {
 
     std::vector<float> weights1(50, 0.1f);
     std::vector<float> biases1(5, 0.0f);
-    std::vector<float> weights2(50, 0.1f);
-    std::vector<float> biases2(5, 0.0f);
+    std::vector<float> weights2(10, 0.1f);
+    std::vector<float> biases2(2, 0.0f);
     LinearLayer<trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
     LinearLayer<trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
 
@@ -95,8 +95,8 @@ void testTensorRTNetworkAndEngine() {
 
     std::vector<float> weights1(50, 0.1f);
     std::vector<float> biases1(5, 0.0f);
-    std::vector<float> weights2(50, 0.1f);
-    std::vector<float> biases2(5, 0.0f);
+    std::vector<float> weights2(10, 0.1f);
+    std::vector<float> biases2(2, 0.0f);
     LinearLayer<trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
     LinearLayer<trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
 
