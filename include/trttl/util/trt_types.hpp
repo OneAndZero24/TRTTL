@@ -8,6 +8,8 @@ namespace trttl {
     namespace trt_types {
         using Severity = nvinfer1::ILogger::Severity;
         using Dims = nvinfer1::Dims;
+        using Dims3 = nvinfer1::Dims3;
+        using Dims4 = nvinfer1::Dims4;
         using DataType = nvinfer1::DataType;
         using Tensor = nvinfer1::ITensor;
         using Network = nvinfer1::INetworkDefinition;

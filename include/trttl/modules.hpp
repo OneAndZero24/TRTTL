@@ -14,11 +14,12 @@ namespace trttl {
 * Analog to PyTorch's `nn.Module` - represents differentiable operations and their compositions.
 *
 * @tparam Derived - CRTP
+* @tparam bs - batch size
 * @tparam in - input shape
 * @tparam out - out shape
 * @tparam dt - data type
 */
-template<typename Derived, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt>
+template<typename Derived, int32_t bs, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt>
 class Module {
 public:
     Module() {
@@ -33,6 +34,7 @@ public:
         return static_cast<Derived*>(this)->addToNetwork_impl(network, data);
     }
 
+    static constexpr int32_t batch_size = bs;
     static constexpr trt_types::Dims in_shape = in;
     static constexpr trt_types::Dims out_shape = out;
     static constexpr trt_types::DataType data_type = dt;
@@ -42,10 +44,10 @@ public:
 * Concept for classes derived from Module.
 */
 template<typename T>
-concept DerivedFromModule = std::derived_from<T, Module<T, T::in_shape, T::out_shape, T::data_type>>;
+concept DerivedFromModule = std::derived_from<T, Module<T, T::batch_size, T::in_shape, T::out_shape, T::data_type>>;
 
 /*!
-* Checks whether data types in a sequence of modules match. Needed for Sequential.
+* Checks whether data types/batch sizes in a sequence of modules match. Needed for Sequential.
 */
 template<typename... Ms>
 struct check_seq;
@@ -56,7 +58,7 @@ struct check_seq<M> : std::true_type {};
 template<DerivedFromModule M1, DerivedFromModule M2, DerivedFromModule... Ms>
 struct check_seq<M1, M2, Ms...>
     : std::conditional_t<
-        (M1::out_shape == M2::in_shape)&&(M1::data_type == M2::data_type), 
+        (M1::batch_size == M2::batch_size)&&(M1::out_shape == M2::in_shape)&&(M1::data_type == M2::data_type), 
         check_seq<M2, Ms...>, 
         std::false_type> 
     {};
@@ -67,9 +69,9 @@ struct check_seq<M1, M2, Ms...>
 * @tparam M - at least one module inside
 * @tparam Ms - possibly more
 */
-template<trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt, DerivedFromModule M, DerivedFromModule... Ms>
-requires (M::in_shape == in && M::data_type == dt && cexpr_utils::last<Ms...>::out_shape == out && check_seq<M, Ms...>::value)
-class Sequential : public Module<Sequential<in, out, dt, M, Ms...>, in, out, dt> {
+template<int32_t bs, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt, DerivedFromModule M, DerivedFromModule... Ms>
+requires (M::in_shape == in && M::data_type == dt && M::batch_size == bs && cexpr_utils::last<Ms...>::out_shape == out && check_seq<M, Ms...>::value)
+class Sequential : public Module<Sequential<bs, in, out, dt, M, Ms...>, bs, in, out, dt> {
 private:
     std::tuple<M, Ms...> modules;
 
@@ -90,8 +92,9 @@ public:
 /*!
 * FullyConnected LinearLayer - pretty self-explanatory.
 */
-template<trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt>
-class LinearLayer : public Module<LinearLayer<in, out, dt>, in, out, dt> {
+template<int32_t bs, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt>
+requires (in.nbDims == 1 && out.nbDims == 1)
+class LinearLayer : public Module<LinearLayer<bs, in, out, dt>, bs, in, out, dt> {
 private:
     std::vector<float> w_data;
     std::vector<float> b_data;
@@ -103,7 +106,7 @@ public:
     }
     
     static auto calcParamDims() {
-        return std::make_tuple(trt_types::Dims{3, {1, in.d[0], out.d[0]}}, trt_types::Dims{3, {1, 1, out.d[0]}});
+        return std::make_tuple(trt_types::Dims3{bs, in.d[0], out.d[0]}, trt_types::Dims3{bs, 1, out.d[0]});
     }
 
     trt_types::Tensor* addToNetwork_impl(trt_types::Network* network, trt_types::Tensor* data) {
