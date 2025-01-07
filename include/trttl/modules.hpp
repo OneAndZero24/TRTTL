@@ -124,6 +124,19 @@ public:
     }
 };
 
+/*!
+* Activation Layer.
+*/
+template<int32_t bs, trt_types::Dims size, trt_types::DataType dt, trt_types::ActivationType at>
+class ActivationLayer : public Module<ActivationLayer<bs, size, dt, at>, bs, size, size, dt> {
+public:
+    static constexpr trt_types::ActivationType activation_type = at;
+
+    trt_types::Tensor* addToNetwork_impl(trt_types::Network* network, trt_types::Tensor* data) {
+        auto activation = network->addActivation(*data, activation_type);
+        return activation->getOutput(0);
+    }
+};
 
 } // trttl namespace
 #endif //MODULE_HPP

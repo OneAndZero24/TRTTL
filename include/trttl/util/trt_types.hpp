@@ -16,6 +16,7 @@ namespace trttl {
         using Weights = nvinfer1::Weights;
         using MatrixOperation = nvinfer1::MatrixOperation;
         using ElementWiseOperation = nvinfer1::ElementWiseOperation;
+        using ActivationType = nvinfer1::ActivationType;
     } // trt_types namespace
 
     constexpr bool operator==(const trt_types::Dims& lhs, const trt_types::Dims& rhs) {
