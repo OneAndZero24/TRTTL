@@ -26,7 +26,7 @@ private:
         builder = nvinfer1::createInferBuilder(logger);
         config = builder->createBuilderConfig();
         network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
-        std::vector<int32_t> d(module.in_shape.d, module.in_shape.d+module.nbDims);
+        std::vector<int32_t> d(module.in_shape.d, module.in_shape.d+module.in_shape.nbDims);
         d.insert(d.begin(), module.batch_size);
         auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{static_cast<int32_t>(d.size()), *d.data()});
 
