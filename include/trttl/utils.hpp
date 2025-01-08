@@ -28,6 +28,14 @@ private:
         network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         std::vector<int32_t> d(module.in_shape.d, module.in_shape.d+module.in_shape.nbDims);
         d.insert(d.begin(), module.batch_size);
+        std::string msg = "Network input: ";
+        for (size_t i = 0; i < d.size(); ++i) {
+            msg += std::to_string(d[i]);
+            if (i < d.size() - 1) {
+                msg += ", ";
+            }
+        }
+        logger.log(trt_types::Severity::kINFO, msg);
         auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims{static_cast<int32_t>(d.size()), *d.data()});
 
         trt_types::Tensor* output_tensor = module.addToNetwork(network, input);
