@@ -28,8 +28,8 @@ namespace trttl {
 
     int32_t dimVolume(const trt_types::Dims& dim) {
         int32_t r = 1;
-        for(auto i = 0; i < dim.ndDims; ++i)
-            r *= d[i];
+        for(auto i = 0; i < dim.nbDims; ++i)
+            r *= dim.d[i];
         return r;
     }
 
