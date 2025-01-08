@@ -102,7 +102,7 @@ private:
 
 public:
     LinearLayer() {
-        w_data = std::vector<float>(dimVolume(in), 0.1f);
+        w_data = std::vector<float>(dimVolume(in)*dimVolume(out), 0.1f);
         b_data = std::vector<float>(dimVolume(out), 0.1f);
     }
 

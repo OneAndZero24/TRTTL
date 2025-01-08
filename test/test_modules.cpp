@@ -160,7 +160,8 @@ void testTensorRTEngine() {
     auto buffer = network.serialize();
 
     std::cout << "TensorRT Engine Test Passed!" << std::endl;
-
+    
+    delete network;
     delete builder;
 }
 
