@@ -18,13 +18,14 @@ class Network {
 private:
     M module;
 
-    trt_types::Builder* b_ptr;
-    trt_types::BuilderConf* c_ptr;
+    trt_types::Builder* builder;
+    trt_types::BuilderConf* config;
     trt_types::Network* network;
 
-    void build() {
-        c_ptr = b_ptr->createBuilderConfig();
-        network = b_ptr->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+    void build(nvinfer1::ILogger &logger) {
+        builder = nvinfer1::createInferBuilder(logger);
+        config = builder->createBuilderConfig();
+        network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         int32_t size = module.in_shape.nbDims+1;
         std::vector<int32_t> d(size, 0);
         d[0] = module.batch_size;
@@ -36,21 +37,22 @@ private:
     }
 
 public: 
-    Network(trt_types::Builder* builder) : b_ptr(builder) {
-        build();
+    Network(nvinfer1::ILogger& log) {
+        build(log);
     }
 
-    Network(trt_types::Builder* builder, M m) : module(m),  b_ptr(builder) {
-        build();
+    Network(nvinfer1::ILogger& log, M m) : module(m) {
+        build(log);
     }
 
     ~Network() {
         delete network;
-        delete c_ptr;
+        delete config;
+        delete builder;
     }
 
     std::unique_ptr<trt_types::Memory> serialize() {
-        std::unique_ptr<trt_types::Memory> buffer(b_ptr->buildSerializedNetwork(*network, *c_ptr));
+        std::unique_ptr<trt_types::Memory> buffer(builder->buildSerializedNetwork(*network, *config));
         return buffer;
     }
 };

@@ -154,15 +154,11 @@ void testTensorRTEngine() {
         SoftmaxLayer<1, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT>
         > seq;
 
-    nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
-    trttl::Network network(builder, seq);
+    trttl::Network network(logger, seq);
 
     auto buffer = network.serialize();
 
     std::cout << "TensorRT Engine Test Passed!" << std::endl;
-    
-    delete network;
-    delete builder;
 }
 
 int main() {
