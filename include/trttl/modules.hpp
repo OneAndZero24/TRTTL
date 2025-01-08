@@ -76,6 +76,7 @@ private:
     std::tuple<M, Ms...> modules;
 
 public:
+    Sequential() : modules() {}
     Sequential(M m, Ms... ms) : modules(m, ms...) {}
 
     template<DerivedFromModule... Modules>
@@ -93,7 +94,7 @@ public:
 * FullyConnected LinearLayer - pretty self-explanatory.
 */
 template<int32_t bs, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt>
-requires (in.nbDims == 1 && out.nbDims == 1)
+requires (in.nbDims == 2 && out.nbDims == 2)
 class LinearLayer : public Module<LinearLayer<bs, in, out, dt>, bs, in, out, dt> {
 private:
     std::vector<float> w_data;

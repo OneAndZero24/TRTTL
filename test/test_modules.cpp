@@ -11,7 +11,7 @@ using namespace trttl;
 void testLinearLayerInitialization() {
     std::vector<float> weights(50, 0.1f);
     std::vector<float> biases(5, 0.0f);
-    LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer(weights, biases);
+    LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT> layer(weights, biases);
     auto paramDims = layer.calcParamDims();
     std::cout << std::get<0>(paramDims).d[1] << " " << std::get<0>(paramDims).d[2] << " " << std::get<1>(paramDims).d[2] << std::endl;
     assert(50 == std::get<0>(paramDims).d[1] * std::get<0>(paramDims).d[2]);
@@ -26,7 +26,7 @@ void testLinearLayerAddToNetwork() {
 
     std::vector<float> weights(50, 0.1f);
     std::vector<float> biases(5, 0.0f);
-    LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer(weights, biases);
+    LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT> layer(weights, biases);
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
     trt_types::Network* network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -48,12 +48,12 @@ void testSequentialInitialization() {
     std::vector<float> biases1(5, 0.0f);
     std::vector<float> weights2(10, 0.1f);
     std::vector<float> biases2(2, 0.0f);
-    LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
-    LinearLayer<1, trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
+    LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
+    LinearLayer<1, trt_types::Dims{2, {1, 5}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
 
-    Sequential<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT,
-        LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT>,
-        LinearLayer<1, trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT>
+    Sequential<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT,
+        LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT>,
+        LinearLayer<1, trt_types::Dims{2, {1, 5}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT>
         > seq(layer1, layer2);
 
     std::cout << "Sequential Initialization Test Passed!" << std::endl;
@@ -67,12 +67,12 @@ void testSequentialAddToNetwork() {
     std::vector<float> biases1(5, 0.0f);
     std::vector<float> weights2(10, 0.1f);
     std::vector<float> biases2(2, 0.0f);
-    LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
-    LinearLayer<1, trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
+    LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
+    LinearLayer<1, trt_types::Dims{2, {1, 5}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
 
-    Sequential<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT,
-        LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT>,
-        LinearLayer<1, trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT>
+    Sequential<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT,
+        LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT>,
+        LinearLayer<1, trt_types::Dims{2, {1, 5}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT>
         > seq(layer1, layer2);
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
@@ -91,7 +91,7 @@ void testSequentialAddToNetwork() {
 
 // Test Case for ActivationLayer initialization
 void testActivationLayerInitialization() {
-    ActivationLayer<1, trt_types::Dims{1, {10}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU> layer;
+    ActivationLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU> layer;
     static_assert(layer.activation_type == trt_types::ActivationType::kRELU, "Activation type mismatch.");
     std::cout << "ActivationLayer Initialization Test Passed!" << std::endl;
 }
@@ -100,7 +100,7 @@ void testActivationLayerInitialization() {
 void testActivationLayerAddToNetwork() {
     DefaultLogger logger;
 
-    ActivationLayer<1, trt_types::Dims{1, {10}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU> layer;
+    ActivationLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU> layer;
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
     trt_types::Network* network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -119,7 +119,7 @@ void testActivationLayerAddToNetwork() {
 
 // Test Case for SoftmaxLayer initialization
 void testSoftmaxLayerInitialization() {
-    SoftmaxLayer<1, trt_types::Dims{1, {10}}, trt_types::DataType::kFLOAT> layer;
+    SoftmaxLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::DataType::kFLOAT> layer;
     std::cout << "SoftmaxLayer Initialization Test Passed!" << std::endl;
 }
 
@@ -127,7 +127,7 @@ void testSoftmaxLayerInitialization() {
 void testSoftmaxLayerAddToNetwork() {
     DefaultLogger logger;
 
-    SoftmaxLayer<1, trt_types::Dims{1, {10}}, trt_types::DataType::kFLOAT> layer;
+    SoftmaxLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::DataType::kFLOAT> layer;
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
     trt_types::Network* network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
@@ -149,38 +149,20 @@ void testSoftmaxLayerAddToNetwork() {
 void testTensorRTEngine() {
     DefaultLogger logger;
 
-    std::vector<float> weights1(50, 0.1f);
-    std::vector<float> biases1(5, 0.0f);
-    std::vector<float> weights2(10, 0.1f);
-    std::vector<float> biases2(2, 0.0f);
-    LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT> layer1(weights1, biases1);
-    ActivationLayer<1, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU> act;
-    LinearLayer<1, trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> layer2(weights2, biases2);
-    SoftmaxLayer<1, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT> sm;
-
-    Sequential<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT,
-        LinearLayer<1, trt_types::Dims{1, {10}}, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT>,
-        ActivationLayer<1, trt_types::Dims{1, {5}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU>,
-        LinearLayer<1, trt_types::Dims{1, {5}}, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT>,
-        SoftmaxLayer<1, trt_types::Dims{1, {2}}, trt_types::DataType::kFLOAT>
-        > seq(layer1, act, layer2, sm);
+    Sequential<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT,
+        LinearLayer<1, trt_types::Dims{2, {1, 10}}, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT>,
+        ActivationLayer<1, trt_types::Dims{2, {1, 5}}, trt_types::DataType::kFLOAT, trt_types::ActivationType::kRELU>,
+        LinearLayer<1, trt_types::Dims{2, {1, 5}}, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT>,
+        SoftmaxLayer<1, trt_types::Dims{2, {1, 2}}, trt_types::DataType::kFLOAT>
+        > seq;
 
     nvinfer1::IBuilder* builder = nvinfer1::createInferBuilder(logger);
-    nvinfer1::IBuilderConfig *config = builder->createBuilderConfig();
-    trt_types::Network* network = builder->createNetworkV2(1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
-    auto input = network->addInput("input", trt_types::DataType::kFLOAT, trt_types::Dims3{1, 1, 10});
+    trttl::Network network(builder, seq);
 
-    trt_types::Tensor* output_tensor = seq.addToNetwork(network, input);
-    network->markOutput(*output_tensor);
-
-    nvinfer1::IHostMemory* buffer{nullptr};
-    buffer = builder->buildSerializedNetwork(*network, *config);
+    auto buffer = network.serialize();
 
     std::cout << "TensorRT Engine Test Passed!" << std::endl;
 
-    delete buffer;
-    delete network;
-    delete config;
     delete builder;
 }
 
