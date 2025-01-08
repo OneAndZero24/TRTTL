@@ -112,7 +112,7 @@ public:
     }
     
     static auto calcParamDims() {
-        return std::make_tuple(trt_types::Dims3{bs, in.d[0], out.d[0]}, trt_types::Dims3{bs, 1, out.d[0]});
+        return std::make_tuple(trt_types::Dims3{bs, dimVolume(in), dimVolume(out)}, trt_types::Dims3{bs, 1, dimVolume(out)});
     }
 
     trt_types::Tensor* addToNetwork_impl(trt_types::Network* network, trt_types::Tensor* data) {
