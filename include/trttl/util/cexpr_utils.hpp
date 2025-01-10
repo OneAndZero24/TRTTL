@@ -6,7 +6,7 @@
 namespace trttl {
     namespace cexpr_utils {
         /*!
-        * Returns last param.
+        * Returns last param type/value.
         */
         template <typename... Ts>
         struct last_rec {
@@ -16,11 +16,18 @@ namespace trttl {
         template<typename T>
         struct last_rec<T> {
             using type = T; 
+            static constexpr T value(T last_value) {
+                return last_value;
+            }
         };
 
         template<typename T1, typename T2, typename... Ts>
         struct last_rec<T1, T2, Ts...> {
             using type = typename last_rec<T2, Ts...>::type;
+            template <typename... Args>
+            static constexpr type value(T1, T2, Args... args) {
+                return last_rec<T2, Ts...>::value(args...);
+            }
         };
 
         template<typename... Ts>

@@ -156,5 +156,37 @@ public:
     }
 };
 
+/*!
+* Template meta-function to compute the `Sequential` module recursively for the MLP.
+*/
+template<int32_t bs, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt, int32_t first, int32_t second, int32_t... rest>
+struct MLP_Helper {
+    using Type = Sequential<bs, in, out, dt,
+        LinearLayer<bs, in, trt_types::Dims{2, {1, second}}, dt>,
+        ActivationLayer<bs, trt_types::Dims{2, {1, second}}, dt, trt_types::ActivationType::kRELU>,
+        typename MLP_Helper<bs, trt_types::Dims{2, {1, second}}, out, dt, second, rest...>::Type>;
+};
+
+template<int32_t bs, trt_types::Dims in, trt_types::Dims out, trt_types::DataType dt, int32_t first, int32_t second>
+struct MLP_Helper<bs, in, out, dt, first, second> {
+    using Type = Sequential<bs, in, out, dt,
+        LinearLayer<bs, in, trt_types::Dims{2, {1, second}}, dt>,
+        ActivationLayer<bs, trt_types::Dims{2, {1, second}}, dt, trt_types::ActivationType::kRELU>,
+        LinearLayer<bs, trt_types::Dims{2, {1, second}}, out, dt>,
+        SoftmaxLayer<bs, out, dt>
+    >;
+};
+
+/*!
+* Multi-Layer Percepttron
+*/
+template<int32_t bs, trt_types::DataType dt, int32_t first, int32_t... hiddenSizes>
+class MLP : public MLP_Helper<bs, trt_types::Dims{2, {1, first}}, trt_types::Dims{2, {1, cexpr_utils::last_rec::value(first, hiddenSizes...)}}, dt, first, hiddenSizes...>::Type {
+    using Base = typename MLP_Helper<bs, trt_types::Dims{2, {1, first}}, trt_types::Dims{2, {1, cexpr_utils::last_rec::value(first, hiddenSizes...)}},dt, first, hiddenSizes...>::Type;
+
+public:
+    MLP() : Base() {}
+};
+
 } // trttl namespace
 #endif //MODULE_HPP
