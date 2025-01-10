@@ -21,6 +21,12 @@ Lightweight C++ template library that builds on top of TensorRT C++ API extendin
 
 Tested on NVIDIA GTX 1060 6GB Pascal Architecture.
 
+## TODO
+- Convolution Layer
+- Split/Join Layers
+- Weights loader
+- Examples & Benchmarks
+
 ## Commands
 **Build Image & Compile**
 ```
